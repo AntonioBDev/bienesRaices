@@ -4,6 +4,10 @@
   $db = conectarDB();
   incluirTemplate('header');
 
+  //Consulta para extraer vendedores 
+  $consulta = "SELECT * FROM vendedores;";
+  $resultadoTablaVendedores = mysqli_query($db, $consulta); 
+
   //Arreglo con mensaje de errores
   $errores = [];
 
@@ -19,9 +23,9 @@
   //Ejecutar el codigo despues de que el usuario envia el formulario
   // $_SERVER:  es una variable superglobal en PHP que contiene un array asociativo con información sobre el servidor. 
   if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // echo "<pre>";
-    //   var_dump($_POST); 
-    // echo"</pre>";
+    echo "<pre>";
+      var_dump($_POST); 
+    echo"</pre>";
     $titulo = $_POST['titulo'];
     $precio = $_POST['precio'];
     // $imagen = $_POST['imagen'];
@@ -30,6 +34,8 @@
     $wc = $_POST['wc'];
     $estacionamiento = $_POST['estacionamiento'];
     $vendedorId = $_POST['vendedor'];
+    $creado = date('Y/m/d');
+
 
     if (!$titulo) {
       $errores[] = 'Debes añadir un titulo';
@@ -56,11 +62,13 @@
     //Verificar que el arreglo de error no este vacio 
     if (empty($errores)) {
       //Insertar en la base de datos 
-      $query = "INSERT INTO propiedades(titulo, precio, descripcion, habitacion, wc, estacionamiento, vendedores_id) VALUE ('$titulo', '$precio', '$descripcion', '$habitacion', '$wc', '$estacionamiento', '$vendedorId');";
+      $query = "INSERT INTO propiedades(titulo, precio, descripcion, habitacion, wc, estacionamiento, creado, vendedores_id) VALUE ('$titulo', '$precio', '$descripcion', '$habitacion', '$wc', '$estacionamiento', '$creado','$vendedorId');";
       $resultado = mysqli_query($db, $query);
 
       if ($resultado) {
-        echo "Enviado con exito";
+        // echo "Enviado con exito";
+        // Redireccionar al usuario
+        header('Location:/admin');
       }
     }
   }
@@ -107,8 +115,9 @@
         <legend>Vendedor</legend>
         <select name="vendedor">
           <option value="">--Seleccione--</option>
-          <option value="1">juan</option>
-          <option value="2">karen</option>
+          <?php while($row = mysqli_fetch_assoc($resultadoTablaVendedores)) :?>
+            <option <?php echo $vendedorId === $row['id']? 'selected':''; ?> value="<?php echo $row['id']?>"><?php echo $row['nombre']." ".$row['apellido'] ?></option>
+          <?php endwhile?>
         </select>
       </fieldset>
 
