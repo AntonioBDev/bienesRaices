@@ -1,5 +1,7 @@
   <?php
+    require '../../includes/config/database.php';
     require '../../includes/funciones.php';
+    $db = conectarDB();
     incluirTemplate('header');
     ?>
     <main class="contenedor seccion">
