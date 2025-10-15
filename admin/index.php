@@ -1,6 +1,12 @@
 <?php
-    // Importar la BD
+    require '../includes/funciones.php';
     require '../includes/config/database.php';
+    $auth = estaAutenticado();
+
+    if(!$auth){
+      header('Location: /');
+    }
+    // Importar la BD
     $db = conectarDB();
 
     //Escribir el query
@@ -12,7 +18,6 @@
     // Muestra mensaje condicional
     $resultado = $_GET['resultado'] ?? null;
     // Incluye Template
-    require '../includes/funciones.php';
     incluirTemplate('header');
 
     //POST Form del boton de Eliminar
