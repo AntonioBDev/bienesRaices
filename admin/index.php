@@ -1,99 +1,95 @@
 <?php
-    require '../includes/funciones.php';
-    require '../includes/config/database.php';
-    $auth = estaAutenticado();
+require '../includes/funciones.php';
+require '../includes/config/database.php';
+$auth = estaAutenticado();
+if (!$auth) {
+  header('Location: /');
+}
+// Importar la BD
+$db = conectarDB();
 
-    if(!$auth){
-      header('Location: /');
+//Escribir el query
+$query = "SELECT * FROM propiedades";
+
+//Consultar a la BD
+$resultadoConsulta = mysqli_query($db, $query);
+
+// Muestra mensaje condicional
+$resultado = $_GET['resultado'] ?? null;
+// Incluye Template
+incluirTemplate('header');
+
+//POST Form del boton de Eliminar
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  $id = $_POST['id'];
+  //Filtrar para validar que sea un numero.
+  $id = filter_var($id, FILTER_VALIDATE_INT);
+
+  // Condicion si es verdadero y pasa el filtro. 
+  if ($id) {
+    // Eliminar archivo(Imagen)
+    $query = "SELECT imagen FROM propiedades WHERE id = {$id};";
+    $resultado = mysqli_query($db, $query);
+    $propiedad = mysqli_fetch_assoc($resultado);
+
+    // var_dump($propiedad['imagen']);
+    unlink('../imagenes/' . $propiedad['imagen']);
+
+    //Realizar query para eliminar la propiedad
+    $query = "DELETE FROM propiedades WHERE id = {$id};";
+    $resultado = mysqli_query($db, $query);
+
+    // redireccionamiento 
+    if ($resultado) {
+      header('location: /admin?resultado=3');
     }
-    // Importar la BD
-    $db = conectarDB();
+  }
+}
+?>
+<main class="contenedor seccion">
+  <h1>Administrador de Bienes Raices</h1>
+  <?php if (intval($resultado) === 1): ?>
+    <p class="alerta exito">Anuncio creado correctamente</p>
+  <?php elseif (intval($resultado) === 2): ?>
+    <p class="alerta exito">Anuncio actualizado correctamente</p>
+  <?php elseif (intval($resultado) === 3): ?>
+    <p class="alerta exito">Anuncio eliminado correctamente</p>
+  <?php endif; ?>
+  <a href="/admin/propiedades/crear.php" class="boton-verde">Nueva propiedad</a>
 
-    //Escribir el query
-    $query = "SELECT * FROM propiedades";
-
-    //Consultar a la BD
-    $resultadoConsulta = mysqli_query($db, $query);
-
-    // Muestra mensaje condicional
-    $resultado = $_GET['resultado'] ?? null;
-    // Incluye Template
-    incluirTemplate('header');
-
-    //POST Form del boton de Eliminar
-    if($_SERVER['REQUEST_METHOD'] === 'POST'){
-      $id = $_POST['id'];
-      //Filtrar para validar que sea un numero.
-      $id =filter_var($id, FILTER_VALIDATE_INT);
-
-      // Condicion si es verdadero y pasa el filtro. 
-      if($id){
-        // Eliminar archivo(Imagen)
-        $query = "SELECT imagen FROM propiedades WHERE id = {$id};";
-        $resultado = mysqli_query($db, $query);
-        $propiedad = mysqli_fetch_assoc($resultado);
-
-        // var_dump($propiedad['imagen']);
-        unlink('../imagenes/'.$propiedad['imagen']);
-        
-        //Realizar query para eliminar la propiedad
-        $query = "DELETE FROM propiedades WHERE id = {$id};";
-        $resultado = mysqli_query($db, $query);
-
-        // redireccionamiento 
-        if($resultado){
-          header('location: /admin?resultado=3');
-        }
-
-
-      }
-    }
-    ?>
-    <main class="contenedor seccion">
-      <h1>Administrador de Bienes Raices</h1>
-      <?php if(intval($resultado) === 1): ?>
-        <p class="alerta exito">Anuncio creado correctamente</p>
-      <?php elseif(intval($resultado) === 2):?>
-        <p class="alerta exito">Anuncio actualizado correctamente</p>
-      <?php elseif(intval($resultado) === 3):?>
-        <p class="alerta exito">Anuncio eliminado correctamente</p>
-       <?php endif;?> 
-      <a href="/admin/propiedades/crear.php" class="boton-verde">Nueva propiedad</a>
-
-      <!-- Mostrar tabla de propiedades -->
-       <table class="propiedades">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Titulo</th>
-              <th>Imagen</th>
-              <th>Precio</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <!-- Moatrar los resultados de la base de datos -->
-          <tbody>
-            <?php while($propiedad = mysqli_fetch_assoc($resultadoConsulta)):?>
-            <tr>
-              <th><?php echo $propiedad['id'];?></th>
-              <th><?php echo $propiedad['titulo'];?></th>
-              <th><img src="/imagenes/<?php echo $propiedad['imagen'];?>" alt="" class="imagen-tabla"></th>
-              <th><?php echo $propiedad['precio'];?></th>
-              <th>
-                <form action="" method="POST" class="w-100">
-                  <input type="hidden" name="id" value="<?php echo $propiedad['id']?>">
-                  <input type="submit" value="Eliminar" class="boton-rojo-block">
-                </form>
-                <a href="/admin/propiedades/actualizar.php?id=<?php echo $propiedad['id']?>" class="boton-amarillo-block">Actualizar</a>
-              </th>
-            </tr>
-            <?php endwhile; ?>
-          </tbody>
-       </table>
-    </main>
-  <?php
-    //cerrar la base de datos
-    mysqli_close($db);
-    incluirTemplate('footer');
-    ?>
-   
+  <!-- Mostrar tabla de propiedades -->
+  <table class="propiedades">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Titulo</th>
+        <th>Imagen</th>
+        <th>Precio</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <!-- Moatrar los resultados de la base de datos -->
+    <tbody>
+      <?php while ($propiedad = mysqli_fetch_assoc($resultadoConsulta)): ?>
+        <tr>
+          <th><?php echo $propiedad['id']; ?></th>
+          <th><?php echo $propiedad['titulo']; ?></th>
+          <th><img src="/imagenes/<?php echo $propiedad['imagen']; ?>" alt="" class="imagen-tabla"></th>
+          <th><?php echo $propiedad['precio']; ?></th>
+          <th>
+            <form action="" method="POST" class="w-100">
+              <input type="hidden" name="id" value="<?php echo $propiedad['id'] ?>">
+              <input type="submit" value="Eliminar" class="boton-rojo-block">
+            </form>
+            <a href="/admin/propiedades/actualizar.php?id=<?php echo $propiedad['id'] ?>" class="boton-amarillo-block">Actualizar</a>
+          </th>
+        </tr>
+      <?php endwhile; ?>
+    </tbody>
+  </table>
+</main>
+<?php
+//cerrar la base de datos
+mysqli_close($db);
+incluirTemplate('footer');
+?>

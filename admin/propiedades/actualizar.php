@@ -30,14 +30,12 @@
   // echo "</pre>";
   // exit;
 
-
   //Consulta para extraer vendedores 
   $consulta = "SELECT * FROM vendedores;";
   $resultadoTablaVendedores = mysqli_query($db, $consulta);
 
   //Arreglo con mensaje de errores
   $errores = [];
-
   $titulo = $propiedad['titulo'];
   $precio = $propiedad['precio'];
   $imagenPropiedad = $propiedad['imagen'];

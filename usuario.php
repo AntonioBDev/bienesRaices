@@ -18,3 +18,7 @@
     //Agregar a la base de datos
     mysqli_query($db, $query);  
 ?> 
+
+
+
+
