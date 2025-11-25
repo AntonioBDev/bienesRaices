@@ -1,10 +1,8 @@
 <?php
 require '../includes/funciones.php';
 require '../includes/config/database.php';
-$auth = estaAutenticado();
-if (!$auth) {
-  header('Location: /');
-}
+estaAutenticado();
+
 // Importar la BD
 $db = conectarDB();
 
