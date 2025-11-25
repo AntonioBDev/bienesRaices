@@ -11,7 +11,7 @@ if (!$id) {
 
 //Importar conexion BD 
 // require 'includes/config/database.php';
-$db = conectarDB();
+$db = conectarDB();;
 
 //Consulta 
 $query = "SELECT * FROM propiedades WHERE id = {$id}";
