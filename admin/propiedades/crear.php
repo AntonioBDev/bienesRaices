@@ -2,6 +2,8 @@
   require '../../includes/app.php';
   //Importar la clase Propiedad mediante el namespace App utilizando la sentencia use utilizando el autoloader
   use App\Propiedad;
+  use Intervention\Image\Drivers\Gd\Driver;
+  use Intervention\Image\ImageManager as Image;
 
   estaAutenticado();
 
@@ -14,96 +16,47 @@
   $resultadoTablaVendedores = mysqli_query($db, $consulta);
 
   //Arreglo con mensaje de errores
-  $errores = [];
+  $errores = Propiedad::getErrores();
 
   $titulo = '';
   $precio = '';
-  // $imagen = $_POST['imagen'];
   $descripcion = '';
   $habitacion = '';
   $wc = '';
   $estacionamiento = '';
   $vendedorId = '';
+  // $imagen = $_POST['imagen'];
 
   //Ejecutar el codigo despues de que el usuario envia el formulario
   // $_SERVER:  es una variable superglobal en PHP que contiene un array asociativo con información sobre el servidor. 
   if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $propiedad = new Propiedad($_POST);
-    $propiedad->guardar();
-    // echo "<pre>";
-    //   var_dump($_POST); 
-    // echo"</pre>";
 
-    // echo "<pre>";
-    //   var_dump($_FILES); 
-    // echo"</pre>";
-
-    $titulo = mysqli_real_escape_string($db, $_POST['titulo']);
-    $precio = mysqli_real_escape_string($db, $_POST['precio']);
-    $descripcion = mysqli_real_escape_string($db, $_POST['descripcion']);
-    $habitacion = mysqli_real_escape_string($db, $_POST['habitacion']);
-    $wc = mysqli_real_escape_string($db, $_POST['wc']);
-    $estacionamiento = mysqli_real_escape_string($db, $_POST['estacionamiento']);
-    $vendedorId = mysqli_real_escape_string($db, $_POST['vendedores_id']);
-    $creado = date('Y/m/d');
-    //Asignar files hacia una variable 
-    $imagen = $_FILES['imagen'];
-
-
-    if (!$titulo) {
-      $errores[] = 'Debes añadir un titulo';
-    }
-    if (!$precio) {
-      $errores[] = 'El precio es obligatorio';
-    }
-    if (strlen($descripcion) < 50) {
-      $errores[] = 'La descripción es obligatorio y debe tener al menos 50 caracteres';
-    }
-    if (!$habitacion) {
-      $errores[] = 'El número de habitaciones es obligatorio';
-    }
-    if (!$wc) {
-      $errores[] = 'El número de Baños es obligatorio';
-    }
-    if (!$estacionamiento) {
-      $errores[] = 'El número de lugares de estacionamiento es obligatorio';
-    }
-    if (!$vendedorId) {
-      $errores[] = 'Elige un vendedor';
-    }
-    if (!$imagen["name"] || $imagen['error']) {
-      $errores[] = 'La imagen es obligatoria';
+    //Generar  un nombre unico 
+    $nombreImagen = md5(uniqid(rand(), true)) . ".jpg";
+    if ($_FILES['imagen']['tmp_name']) {
+      $manager = new Image(Driver::class);
+      $imagen = $manager->read($_FILES['imagen']['tmp_name'])->cover(800, 600);
+      $propiedad->setImagen($nombreImagen);
     }
 
-    $medida = 1000 * 1000;
-    if ($imagen["size"] >= $medida) {
-      $errores[] = 'La imagen es muy pesada';
-    }
+    $errores = $propiedad->validar();
 
     //Verificar que el arreglo de error no este vacio 
     if (empty($errores)) {
       /** SUBIDA DE ARCHIVOS **/
-
-      //Crear Carpeta 
-      // indicar en que ubicacion se creara 
-      $carpetaImagenes = '../../imagenes';
       // Crear sentencia para saber si no exite la carpeta 
-      if (!is_dir($carpetaImagenes)) {
+      if (!is_dir(CARPETA_IMAGENES)) {
         //Propiedad para crear directorio
-        mkdir($carpetaImagenes);
+        mkdir(CARPETA_IMAGENES);
       }
-      //Generar  un nombre unico 
-      $nombreImagen = md5(uniqid(rand(), true)) . ".jpg";
 
-      //Subir la imagen 
-      move_uploaded_file($imagen['tmp_name'], $carpetaImagenes . "/" . $nombreImagen);
-
-      // exit;
+      //Guardar la imagen en el servidor
+      $imagen->save(CARPETA_IMAGENES . $nombreImagen);
 
       //Insertar en la base de datos 
-      $resultado = mysqli_query($db, $query);
-
+      $resultado = $propiedad->guardar();
       if ($resultado) {
         // echo "Enviado con exito";
         // Redireccionar al usuario

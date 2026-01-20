@@ -2,15 +2,14 @@
 // __DIR__ : nos ayuda a definir la ruta para solucionar el error, sin ello que no encuentra la ruta que se le solicita.
 define('TEMPLATES_URL', __DIR__ . '/templates');
 define('FUNCIONES_URL', __DIR__ . 'funciones.php');
+define('CARPETA_IMAGENES', __DIR__ . '/../imagenes/');
 
 
-function incluirTemplate(string $nombre, bool $inicio = false)
-{
+function incluirTemplate(string $nombre, bool $inicio = false){
     include TEMPLATES_URL . "/{$nombre}.php";
 }
 
-function estaAutenticado(): void
-{
+function estaAutenticado(): void{
     session_start();
     if (!$_SESSION['login']) {
         header('Location: /');
@@ -18,8 +17,7 @@ function estaAutenticado(): void
 }
 
 
-function debuguear($variable)
-{
+function debuguear($variable){
     echo "<pre>";
     var_dump($variable);
     echo "</pre>";
