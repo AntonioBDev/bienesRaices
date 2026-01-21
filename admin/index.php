@@ -2,14 +2,10 @@
 require '../includes/app.php';
 estaAutenticado();
 
-// Importar la BD
-$db = conectarDB();
+USE App\Propiedad;
 
-//Escribir el query
-$query = "SELECT * FROM propiedades";
-
-//Consultar a la BD
-$resultadoConsulta = mysqli_query($db, $query);
+//Implementar metodo para obtener todas las propiedades
+$propiedades = Propiedad::all();
 
 // Muestra mensaje condicional
 $resultado = $_GET['resultado'] ?? null;
@@ -67,21 +63,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </thead>
     <!-- Moatrar los resultados de la base de datos -->
     <tbody>
-      <?php while ($propiedad = mysqli_fetch_assoc($resultadoConsulta)): ?>
+      <?php foreach($propiedades as $propiedad): ?>
         <tr>
-          <th><?php echo $propiedad['id']; ?></th>
-          <th><?php echo $propiedad['titulo']; ?></th>
-          <th><img src="/imagenes/<?php echo $propiedad['imagen']; ?>" alt="" class="imagen-tabla"></th>
-          <th><?php echo $propiedad['precio']; ?></th>
+          <th><?php echo $propiedad->id; ?></th>
+          <th><?php echo $propiedad->titulo; ?></th>
+          <th><img src="/imagenes/<?php echo $propiedad->imagen; ?>" alt="" class="imagen-tabla"></th>
+          <th><?php echo $propiedad->precio; ?></th>
           <th>
             <form action="" method="POST" class="w-100">
-              <input type="hidden" name="id" value="<?php echo $propiedad['id'] ?>">
+              <input type="hidden" name="id" value="<?php echo $propiedad->id ?>">
               <input type="submit" value="Eliminar" class="boton-rojo-block">
             </form>
-            <a href="/admin/propiedades/actualizar.php?id=<?php echo $propiedad['id'] ?>" class="boton-amarillo-block">Actualizar</a>
+            <a href="/admin/propiedades/actualizar.php?id=<?php echo $propiedad->id?>" class="boton-amarillo-block">Actualizar</a>
           </th>
         </tr>
-      <?php endwhile; ?>
+      <?php endforeach; ?>
     </tbody>
   </table>
 </main>
