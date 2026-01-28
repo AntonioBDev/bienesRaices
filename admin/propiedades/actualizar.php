@@ -1,12 +1,9 @@
   <?php
-    require '../../includes/app.php';
-    $auth = estaAutenticado();
-    if(!$auth){
-      header('Location: /');
-    }
+  use App\Propiedad;
 
-  //Conexion a la BD
-  $db = conectarDB();
+  require '../../includes/app.php';
+  estaAutenticado();
+
   incluirTemplate('header');
 
   //Extraer ID con _GET
@@ -19,10 +16,8 @@
     header('Location:/admin');
   }
 
-  //Consulta para extraer las propiedades 
-  $consulta = "SELECT * FROM propiedades WHERE id = {$id}";
-  $resultado = mysqli_query($db, $consulta);
-  $propiedad = mysqli_fetch_assoc($resultado);
+  //Obtener los datos de las propiedades 
+  $propiedad = Propiedad::find($id);
 
   // echo "<pre>";
   // var_dump($propiedad);

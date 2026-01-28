@@ -135,13 +135,23 @@ class Propiedad
         return $resultado;
     }
 
-    public static function consultarSQL($query){
+    //Busca una propiedad por su ID
+    public static function find($id)
+    {
+        //Consulta para extraer las propiedades 
+        $query = "SELECT * FROM propiedades WHERE id = {$id}";
+        $resultado = self::consultarSQL($query);
+        debuguear($resultado);
+    }
+
+    public static function consultarSQL($query)
+    {
         //Consultar la base de datos
         $resultado = self::$db->query($query);
 
         //Iterar los resultados
         $array = [];
-        while($registro = $resultado->fetch_assoc()){
+        while ($registro = $resultado->fetch_assoc()) {
             $array[] = self::crearObjeto($registro);
         }
         //Liberar la memoria
@@ -151,11 +161,12 @@ class Propiedad
         return $array;
     }
 
-    protected static function crearObjeto($registro){
+    protected static function crearObjeto($registro)
+    {
         $objeto = new self;
 
-        foreach($registro as $key => $value){
-            if(property_exists($objeto, $key)){
+        foreach ($registro as $key => $value) {
+            if (property_exists($objeto, $key)) {
                 $objeto->$key = $value;
             }
         }

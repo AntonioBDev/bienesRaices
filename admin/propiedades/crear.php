@@ -18,6 +18,8 @@
   //Arreglo con mensaje de errores
   $errores = Propiedad::getErrores();
 
+  $propiedad = new Propiedad($_POST);
+
   //Ejecutar el codigo despues de que el usuario envia el formulario
   // $_SERVER:  es una variable superglobal en PHP que contiene un array asociativo con información sobre el servidor. 
   if ($_SERVER['REQUEST_METHOD'] === 'POST') {

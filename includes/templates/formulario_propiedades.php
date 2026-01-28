@@ -2,28 +2,28 @@
         <legend>Informacion general</legend>
 
         <label for="titulo">Titulo</label>
-        <input type="text" id="titulo" name="titulo" placeholder="Titulo propiedad" value="<?php echo $titulo; ?>">
+        <input type="text" id="titulo" name="titulo" placeholder="Titulo propiedad" value="<?php echo s($propiedad->titulo);?>">
 
         <label for="precio">Precio</label>
-        <input type="number" id="precio" name="precio" placeholder="Precio propiedad" value="<?php echo $precio; ?>">
+        <input type="number" id="precio" name="precio" placeholder="Precio propiedad" value="<?php echo s($propiedad->precio); ?>">
 
         <label for="imagen">Imagen</label>
         <input type="file" id="imagen" accept="image/jpeg, image/png" name="imagen">
 
         <label for="descripcion">Descripcion:</label>
-        <textarea id="descripcion" name="descripcion"><?php echo $descripcion ?></textarea>
+        <textarea id="descripcion" name="descripcion"><?php echo s($propiedad->descripcion)?></textarea>
       </fieldset>
 
       <fieldset>
         <legend>Informacion de la propiedad</legend>
         <label for="habitacion">Habitacion</label>
-        <input type="number" id="habitacion" name="habitacion" placeholder="Ej: 3" min="1" max="8" value="<?php echo $habitacion; ?>">
+        <input type="number" id="habitacion" name="habitacion" placeholder="Ej: 3" min="1" max="8" value="<?php echo s($propiedad->habitacion); ?>">
 
         <label for="wc">Baños</label>
-        <input type="number" id="wc" name="wc" placeholder="Ej: 3" min="1" max="8" value="<?php echo $wc; ?>">
+        <input type="number" id="wc" name="wc" placeholder="Ej: 3" min="1" max="8" value="<?php echo s($propiedad->wc); ?>">
 
         <label for="estacionamiento">Estacionamiento</label>
-        <input type="number" id="estacionamiento" name="estacionamiento" placeholder="Ej: 3" min="1" max="8" value="<?php echo $estacionamiento; ?>">
+        <input type="number" id="estacionamiento" name="estacionamiento" placeholder="Ej: 3" min="1" max="8" value="<?php echo s($propiedad->estacionamiento); ?>">
       </fieldset>
 
       <fieldset>
